@@ -1,5 +1,13 @@
 <h1 align="center">○</h1>
 
+<p>
+This is to be used with --multimodal option to run.
+software/source/server/livekit contains the following modifications to multimodal.py, which by replacing the file can make 01 a specific agent:
+</p>
+<ul>
+    <li><b>multimodal-cat.py</b> : makes 01 a robot cat.</li>
+</ul>
+
 <p align="center">
     <a href="https://discord.gg/Hvz9Axh84z"><img alt="Discord" src="https://img.shields.io/discord/1146610656779440188?logo=discord&style=social&logoColor=black"/></a>
     <br>
