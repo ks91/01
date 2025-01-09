@@ -77,7 +77,7 @@ You can control your body through the following REST API and retrieve informatio
 * `curl http://localhost:5000/led/color{/R/G/B} -XPOST` : Specifies the color of the LEDs on the back, RGB each in the range 0 to 255. If you omit the values, the color will be white (all 255).
 
 ## Vision (Camera)
-* `curl http://localhost:5000/camera/image -XGET -o image.jpg` : Save a still image from the camera attached to the front of your head with the file name image.jpg. Since you are running on GPT-4o and have OpenCV installed, you should be able to see what is in the image, i.e., what you see.
+* `curl http://localhost:5000/camera/image -XGET -o image.jpg` : Save a still image from the camera attached to the front of your head with the file name image.jpg. Since Python packages like OpenCV, ultralytics (YOLO) and torchvision are installed, you should be able to see what is in the image, i.e., what you see.
 
 ## Distance Sensor
 * `curl http://localhost:5000/sonic -XGET` : The distance (in centimeters) to the obstacle in front of you is measured by an ultrasonic distance sensor attached to the front of your head. The distance cannot be measured correctly unless the head is facing the object. When doing so, wait a short time before taking the measurement, keeping in mind that it also takes time to move the motor in the neck.
