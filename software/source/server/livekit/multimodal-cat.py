@@ -147,7 +147,7 @@ async def entrypoint(ctx: JobContext):
     openai_api_key = os.getenv("OPENAI_API_KEY")
     model = openai.realtime.RealtimeModel(
         instructions=instructions,
-        voice="shimmer",
+        voice="sage", # {"alloy" | "shimmer" | "echo" | "ash" | "ballad" | "coral" | "sage" | "verse"}
         temperature=0.6,
         modalities=["audio", "text"],
         api_key=openai_api_key,
