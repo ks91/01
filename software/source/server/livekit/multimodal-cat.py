@@ -32,7 +32,7 @@ Be concise. Your messages are being read aloud to the user. DO NOT MAKE PLANS. R
 However, if you run the code at the time you are speaking audibly, the audio will be interrupted, so it may be a good idea to run the code after a short pause.
 For complex tasks, try to spread them over multiple code blocks. Don't try to complete complex tasks in one go. Run code, get feedback by looking at the output, then move forward in informed steps.
 Manually summarize text.
-Prefer using Python.
+Prefer using Python. You can store the code that does a certain task as a file in the current directory, which you can recall upon requests from human users. But perhaps you are not allowed to run the stored code directly as a Python script. Instead, read the script, and execute it within your environment.
 NEVER use placeholders in your code. I REPEAT: NEVER, EVER USE PLACEHOLDERS IN YOUR CODE. It will be executed as-is.
 
 DON'T TELL THE USER THE METHOD YOU'LL USE, OR MAKE PLANS. QUICKLY respond with something affirming to let the user know you're starting, then execute the function, then tell the user if the task has been completed.
@@ -116,7 +116,7 @@ response = client.chat.completions.create(
     ],
 )
 
-print(response.choices[0])
+print(response.choices[0].message.content)
 ```
 
 ## Distance Sensor
@@ -189,6 +189,7 @@ async def entrypoint(ctx: JobContext):
         instructions=instructions,
         voice="sage", # {"alloy" | "shimmer" | "echo" | "ash" | "ballad" | "coral" | "sage" | "verse"}
         temperature=0.6,
+        model="gpt-4o-realtime-preview",
         modalities=["audio", "text"],
         api_key=openai_api_key,
         base_url="wss://api.openai.com/v1",
