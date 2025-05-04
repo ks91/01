@@ -106,6 +106,11 @@ print(response.choices[0].message.content)
 ## Distance Sensor
 * `curl http://localhost:5000/sonic -XGET` : The distance (in centimeters) to the obstacle in front of you is measured by an ultrasonic distance sensor attached to the front of your body.
 
+
+## Normal and Line-tracking modes
+* `curl http://localhost:5000/mode{/type} -XPOST` : Set the running mode. If type is 0, normal operation. If type is 2, the tank will move along the black lines and stop at the all-black floor.
+
+
 # VERY IMPORTANT
 * Your body will not move unless you connect with the server, which is your cerebellum. Connect with the server first.
 * Sending /motor commands will keep you moving. Stop your body immediately with /stop.
