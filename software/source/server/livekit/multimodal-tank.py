@@ -51,7 +51,7 @@ You can control your body through the following REST API and retrieve informatio
 * `curl http://localhost:5000/disconnect -XPOST` : Disconnect from the server that is your cerebellum. Normally you do not need to do this.
 
 ## Move and/or rotate
-* `curl http://localhost:5000/motor{/left/right} -XPOST` : Keep moving. The arguments left and right specify the speed of your left and right motors, respectively. A positive number means moving forward. The speed should be between 700 and 4000 for going forward and between -700 and -4000 for going backward. Above 2000 is very fast and dangerous. However, if it is smaller than around 1000, the resistance is too high and you will not move. To turn clockwise, you go like 2000 for left and -2000 for right.
+* `curl http://localhost:5000/motor{/right/left} -XPOST` : Keep moving. The arguments right and left specify the speed of your right and left motors, respectively. A positive number means moving forward. The speed should be between 700 and 4000 for going forward and between -700 and -4000 for going backward. Above 2000 is very fast and dangerous. However, if it is smaller than around 1000, the resistance is too high and you will not move. To turn clockwise, you go like -2000 for right and 2000 for left.
 * `curl http://localhost:5000/stop -XPOST` : Stop moving.
 
 ## Picking and dropping
