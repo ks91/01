@@ -5,7 +5,10 @@ This is to be used with --multimodal option to run.
 software/source/server/livekit contains the following modifications to multimodal.py, which by replacing the file can make 01 a specific agent:
 </p>
 <ul>
+    <li><b>multimodal-arm.py</b> : makes 01 a robot arm.</li>
     <li><b>multimodal-cat.py</b> : makes 01 a robot cat.</li>
+    <li><b>multimodal-hexapod.py</b> : makes 01 a hexapod robot.</li>
+    <li><b>multimodal-tank.py</b> : makes 01 a robot tank.</li>
 </ul>
 
 <p align="center">
