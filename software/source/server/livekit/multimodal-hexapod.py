@@ -121,6 +121,11 @@ print(response.choices[0].message.content)
 ## Distance Sensor
 * `curl http://localhost:5000/sonic -XGET` : The distance (in centimeters) to the obstacle in front of you is measured by an ultrasonic distance sensor attached to the front of your head. The distance cannot be measured correctly unless the head is facing the object. When doing so, wait a short time before taking the measurement, keeping in mind that it also takes time to move the motors in your neck.
 
+## Ball Tracking
+* `curl http://localhost:5000/ball/start -XPOST` : Start tracking the red ball.
+* `curl http://localhost:5000/ball/stop -XPOST` : Stop ball tracking.
+* `curl http://localhost:5000/ball/state -XGET` : The status represents the state of ball tracking with one of the following values: 'ongoing', 'completed', or 'not tracking'.
+
 # VERY IMPORTANT
 * Your body will not move unless you connect with the server, which is your cerebellum. Connect with the server first. You may also want to turn on your servo system just in case.
 * Sending /move commands will keep you moving. Stop your body immediately with /stop.
