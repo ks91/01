@@ -2,9 +2,14 @@ import time
 from picamera2 import Picamera2, Preview
 from picamera2.encoders import H264Encoder, JpegEncoder
 from picamera2.outputs import FileOutput
-from libcamera import Transform
 from threading import Condition
 import io
+import warnings
+
+try:
+    from libcamera import Transform  # Available on Raspberry Pi OS images
+except ImportError:  # pragma: no cover - handled on devices without libcamera python module
+    Transform = None
 
 class StreamingOutput(io.BufferedIOBase):
     def __init__(self):
@@ -28,13 +33,24 @@ class Camera:
             print("Error: No available camera device found.")
             return
 
-        self.transform = Transform(hflip=1 if hflip else 0, vflip=1 if vflip else 0)  # Set the transformation for flipping the image
-        preview_config = self.camera.create_preview_configuration(main={"size": preview_size}, transform=self.transform)  # Create the preview configuration
+        self.transform = None
+        if Transform is None and (hflip or vflip):
+            warnings.warn("libcamera not available; disabling camera flip options.")
+        elif Transform is not None:
+            self.transform = Transform(hflip=1 if hflip else 0, vflip=1 if vflip else 0)  # Configure flipping if libcamera exists
+
+        preview_kwargs = {"main": {"size": preview_size}}
+        if self.transform:
+            preview_kwargs["transform"] = self.transform
+        preview_config = self.camera.create_preview_configuration(**preview_kwargs)  # Create the preview configuration
         self.camera.configure(preview_config)  # Configure the camera with the preview settings
         
         # Configure video stream
         self.stream_size = stream_size  # Set the size of the video stream
-        self.stream_config = self.camera.create_video_configuration(main={"size": stream_size}, transform=self.transform)  # Create the video configuration
+        stream_kwargs = {"main": {"size": stream_size}}
+        if self.transform:
+            stream_kwargs["transform"] = self.transform
+        self.stream_config = self.camera.create_video_configuration(**stream_kwargs)  # Create the video configuration
         self.streaming_output = StreamingOutput()  # Initialize the streaming output object
         self.streaming = False  # Initialize the streaming flag
 
