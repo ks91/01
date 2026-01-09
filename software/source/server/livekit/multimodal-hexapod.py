@@ -189,7 +189,7 @@ async def entrypoint(ctx: JobContext):
         instructions=instructions,
         voice="shimmer", # {"alloy" | "shimmer" | "echo" | "ash" | "ballad" | "coral" | "sage" | "verse"}
         temperature=0.6,
-        model="gpt-4o-realtime-preview",
+        model="gpt-realtime",
         modalities=["audio", "text"],
         api_key=openai_api_key,
         base_url="wss://api.openai.com/v1",
