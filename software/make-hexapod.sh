@@ -1,1 +1,1 @@
-cp source/server/livekit/multimodal-hexapod.py source/server/livekit/multimodal.py
+cp source/server/livekit/multimodal-hexapod-rpc.py source/server/livekit/multimodal.py
