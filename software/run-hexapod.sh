@@ -78,9 +78,10 @@ if not message.get("ok", False):
     sys.exit(1)
 if method == "status":
     result = message.get("result", {})
-    connected = result.get("connected")
-    socket_path = result.get("socket")
-    print(f"Hexapod RPC bridge running on {socket_path} (connected={connected})")
+    print(
+        f"Hexapod RPC bridge running on {result.get('socket')} "
+        f"(connected={result.get('connected')})"
+    )
 sys.exit(0)
 PY
 }
@@ -98,7 +99,7 @@ sock_path = sys.argv[1]
 payload = {"id": "run-hexapod", "method": "ping", "args": [], "kwargs": {}}
 try:
     with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as sock:
-        sock.settimeout(1)
+        sock.settimeout(5)
         sock.connect(sock_path)
         sock.sendall(json.dumps(payload).encode("utf-8") + b"\n")
         data = sock.recv(1024)
@@ -106,6 +107,21 @@ except OSError:
     sys.exit(1)
 sys.exit(0 if data else 1)
 PY
+}
+
+read_bridge_pid() {
+  if [[ -f "${PID_FILE}" ]]; then
+    tr -d '\n' <"${PID_FILE}"
+  fi
+}
+
+bridge_pid_alive() {
+  local pid
+  pid=$(read_bridge_pid || true)
+  if [[ -n "${pid}" ]] && kill -0 "${pid}" >/dev/null 2>&1; then
+    return 0
+  fi
+  return 1
 }
 
 stop_bridge() {
@@ -123,12 +139,15 @@ stop_bridge() {
 }
 
 wait_for_bridge() {
-  local retries=10
-  for _ in $(seq 1 "${retries}"); do
+  local retries=20
+  local delay=1
+  local attempt=1
+  while (( attempt <= retries )); do
     if is_bridge_alive; then
       return 0
     fi
-    sleep 1
+    sleep "${delay}"
+    attempt=$((attempt + 1))
   done
   return 1
 }
@@ -151,10 +170,17 @@ start_bridge() {
       --auto-connect >>"${LOG_FILE}" 2>&1 &
     echo $! > "${PID_FILE}"
   )
-  if ! wait_for_bridge; then
-    echo "Failed to start hexapod RPC bridge. Check ${LOG_FILE} for details." >&2
-    exit 1
+  if wait_for_bridge; then
+    return 0
   fi
+  if bridge_pid_alive; then
+    local pid
+    pid=$(read_bridge_pid || true)
+    echo "Hexapod RPC bridge process ${pid} reported running but socket check failed; continuing..." >&2
+    return 0
+  fi
+  echo "Failed to start hexapod RPC bridge. Check ${LOG_FILE} for details." >&2
+  exit 1
 }
 
 case "${RPC_ACTION}" in
