@@ -55,7 +55,6 @@ hexapod.call("connect")                # Returns JSON-serializable data
 hexapod.call("servopower", True)
 hexapod.call("move", gait=1, x=0, y=10, angle=0)
 hexapod.call("stop")
-hexapod.call("servopower", False)
 
 # Convenience helper when you don't need to keep a client instance:
 hexapod_call("power")
@@ -87,8 +86,8 @@ In the following API, 'gait' is either 1 (move three legs at a time) or 2 (move 
 ## Posture
 * `hexapod.call("balance", True)` : A value of True puts the balance mode in balance with respect to a tilted ground.
 * `hexapod.call("balance", False)` : Disables the balance mode.
-* `hexapod.call("head_vertical", angle)` : Specifies the vertical tilt of the neck. The bigger the value, the upward. If you omit the value, it will be 90 degrees, looking straight ahead.
-* `hexapod.call("head_horizontal", angle)` : Specifies the horizontal tilt of the neck. The bigger the value, the more right you are facing; the smaller, the more left.
+* `hexapod.call("head_vertical", angle)` : Specifies the vertical tilt of the neck (servo system must be turned on) (angle must be between 60 and 180). The bigger the value, the upward. If you omit the value, it will be 90 degrees, looking straight ahead.
+* `hexapod.call("head_horizontal", angle)` : Specifies the horizontal tilt of the neck (servo system must be turned on) (angle must be between 0 and 180). The bigger the value, the more left you are facing; the smaller, the more right. If you omit the value, it will be 90 degrees, looking at the center.
 * `hexapod.call("position", x, y, z)` : Positions the body by relative x, y, z translations.
 * `hexapod.call("attitude", roll, pitch, yaw)` : Adjust orientation.
 
