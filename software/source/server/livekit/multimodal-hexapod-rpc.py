@@ -94,6 +94,48 @@ In the following API, 'gait' is either 1 (move three legs at a time) or 2 (move 
 
 ## Camera and sensors
 * `hexapod.call("camera_capture", filename)` : Save a frame and return its absolute path.
+
+By using GPT-5 mini, a vision AI, through the following reference code in Python, you should be able to tell what can be seen in the image, i.e., what you see with your eyes. Investigate the inside of the "choices" structure in the response.
+
+```Python
+import base64
+from openai import OpenAI
+
+client = OpenAI()
+
+# Function to encode the image
+def encode_image(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode("utf-8")
+
+# Path to your image
+image_path = "image.jpg"
+
+# Getting the base64 string
+base64_image = encode_image(image_path)
+
+response = client.chat.completions.create(
+    model="gpt-5-mini",
+    messages=[
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "What is in this image?",
+                },
+                {
+                    "type": "image_url",
+                    "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"},
+                },
+            ],
+        }
+    ],
+)
+
+print(response.choices[0].message.content)
+```
+
 * `hexapod.call("sonic")` : Get ultrasonic distance.
 * `hexapod.call("power")` : Get voltages.
 
