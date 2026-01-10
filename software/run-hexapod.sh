@@ -5,36 +5,182 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOCKET_PATH="${HEXAPOD_RPC_SOCKET:-/tmp/hexapod-rpc.sock}"
 LOG_FILE="${HEXAPOD_RPC_LOG:-${SCRIPT_DIR}/hexapod-rpc.log}"
 SYSTEM_PYTHON="${HEXAPOD_SYSTEM_PYTHON:-/usr/bin/python3}"
+PID_FILE="${HEXAPOD_RPC_PID_FILE:-${SOCKET_PATH}.pid}"
 POETRY_ARGS=("01" "--server" "livekit" "--qr" "--multimodal")
-if [[ $# -gt 0 ]]; then
-  POETRY_ARGS=("01" "$@")
+USER_ARGS=()
+RPC_ACTION=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --rpc-stop)
+      RPC_ACTION="stop"
+      shift
+      ;;
+    --rpc-status)
+      RPC_ACTION="status"
+      shift
+      ;;
+    --rpc-restart)
+      RPC_ACTION="restart"
+      shift
+      ;;
+    --)
+      shift
+      USER_ARGS+=("$@")
+      break
+      ;;
+    *)
+      USER_ARGS+=("$1")
+      shift
+      ;;
+  esac
+done
+
+if [[ ${#USER_ARGS[@]} -gt 0 ]]; then
+  POETRY_ARGS=("01" "${USER_ARGS[@]}")
 fi
 
-BRIDGE_PID=""
-cleanup() {
-  if [[ -n "${BRIDGE_PID}" ]]; then
-    if kill -0 "${BRIDGE_PID}" >/dev/null 2>&1; then
-      kill "${BRIDGE_PID}" >/dev/null 2>&1 || true
-      wait "${BRIDGE_PID}" >/dev/null 2>&1 || true
-    fi
-  fi
+mkdir -p "$(dirname "${LOG_FILE}")"
+
+rpc_simple_call() {
+  local method="$1"
+  "${SYSTEM_PYTHON}" - "$SOCKET_PATH" "$method" <<'PY'
+import json
+import socket
+import sys
+
+sock_path = sys.argv[1]
+method = sys.argv[2]
+payload = {"id": "run-hexapod", "method": method, "args": [], "kwargs": {}}
+try:
+    with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as sock:
+        sock.settimeout(2)
+        sock.connect(sock_path)
+        sock.sendall(json.dumps(payload).encode("utf-8") + b"\n")
+        data = b""
+        while b"\n" not in data:
+            chunk = sock.recv(4096)
+            if not chunk:
+                break
+            data += chunk
+except OSError as exc:
+    print(exc, file=sys.stderr)
+    sys.exit(1)
+if not data:
+    sys.exit(1)
+try:
+    message = json.loads(data.decode("utf-8").split("\n", 1)[0])
+except json.JSONDecodeError as exc:
+    print(exc, file=sys.stderr)
+    sys.exit(1)
+if not message.get("ok", False):
+    print(message.get("error", "RPC call failed"), file=sys.stderr)
+    sys.exit(1)
+if method == "status":
+    result = message.get("result", {})
+    connected = result.get("connected")
+    socket_path = result.get("socket")
+    print(f"Hexapod RPC bridge running on {socket_path} (connected={connected})")
+sys.exit(0)
+PY
 }
-trap cleanup EXIT
+
+is_bridge_alive() {
+  if [[ ! -S "${SOCKET_PATH}" ]]; then
+    return 1
+  fi
+  "${SYSTEM_PYTHON}" - "$SOCKET_PATH" <<'PY'
+import json
+import socket
+import sys
+
+sock_path = sys.argv[1]
+payload = {"id": "run-hexapod", "method": "ping", "args": [], "kwargs": {}}
+try:
+    with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as sock:
+        sock.settimeout(1)
+        sock.connect(sock_path)
+        sock.sendall(json.dumps(payload).encode("utf-8") + b"\n")
+        data = sock.recv(1024)
+except OSError:
+    sys.exit(1)
+sys.exit(0 if data else 1)
+PY
+}
+
+stop_bridge() {
+  if ! is_bridge_alive; then
+    echo "Hexapod RPC bridge is not running."
+    rm -f "${PID_FILE}"
+    return 0
+  fi
+  if rpc_simple_call shutdown; then
+    echo "Hexapod RPC bridge shut down."
+  else
+    echo "Failed to stop hexapod RPC bridge." >&2
+  fi
+  rm -f "${PID_FILE}"
+}
+
+wait_for_bridge() {
+  local retries=10
+  for _ in $(seq 1 "${retries}"); do
+    if is_bridge_alive; then
+      return 0
+    fi
+    sleep 1
+  done
+  return 1
+}
 
 start_bridge() {
+  if is_bridge_alive; then
+    echo "Hexapod RPC bridge already running at ${SOCKET_PATH}."
+    return 0
+  fi
   if [[ -S "${SOCKET_PATH}" ]]; then
     rm -f "${SOCKET_PATH}"
   fi
   echo "Starting hexapod RPC bridge via ${SYSTEM_PYTHON}..."
-  (cd "${SCRIPT_DIR}" && \
-    "${SYSTEM_PYTHON}" -m hexapod.rpc_server \
+  (
+    cd "${SCRIPT_DIR}" && \
+    nohup "${SYSTEM_PYTHON}" -m hexapod.rpc_server \
       --socket "${SOCKET_PATH}" \
       --log "${LOG_FILE}" \
       --log-level "INFO" \
-      --auto-connect) &
-  BRIDGE_PID=$!
-  sleep 2
+      --auto-connect >>"${LOG_FILE}" 2>&1 &
+    echo $! > "${PID_FILE}"
+  )
+  if ! wait_for_bridge; then
+    echo "Failed to start hexapod RPC bridge. Check ${LOG_FILE} for details." >&2
+    exit 1
+  fi
 }
+
+case "${RPC_ACTION}" in
+  stop)
+    stop_bridge
+    exit 0
+    ;;
+  status)
+    if is_bridge_alive; then
+      rpc_simple_call status
+      exit 0
+    else
+      echo "Hexapod RPC bridge is not running."
+      exit 1
+    fi
+    ;;
+  restart)
+    stop_bridge
+    start_bridge
+    echo "Hexapod RPC bridge restarted."
+    exit 0
+    ;;
+  *)
+    :
+    ;;
+ esac
 
 start_bridge
 
