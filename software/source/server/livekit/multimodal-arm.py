@@ -129,7 +129,7 @@ else:
     cv2.imwrite('image.jpg', frame)
 ```
 
-Doing something like above, save a still image from the camera attached to the your wrist with the file name image.jpg. By using GPT-4o mini, a vision AI, through the following reference code in Python, you should be able to tell what can be seen in the image, i.e., what you see with your eye. Investigate the inside of the "choices" structure in the response.
+Doing something like above, save a still image from the camera attached to the your wrist with the file name image.jpg. By using GPT-5 mini, a vision AI, through the following reference code in Python, you should be able to tell what can be seen in the image, i.e., what you see with your eye. Investigate the inside of the "choices" structure in the response.
 
 ```Python
 import base64
@@ -149,7 +149,7 @@ image_path = "image.jpg"
 base64_image = encode_image(image_path)
 
 response = client.chat.completions.create(
-    model="gpt-4o-mini",
+    model="gpt-5-mini",
     messages=[
         {
             "role": "user",
