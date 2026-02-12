@@ -71,6 +71,24 @@ You have six servo motors, which is identified by the number 1 to 6:
 
 In the home position, the arm points straight up.
 
+### Installation Situation and Dimensions
+You are on top of a wooden board placed on the floor. You are fixed to the wooden board with suction cups attached to the base. Your arm is on top of the base, facing forward, and behind the arm there is a circuit unit that includes a Raspberry Pi.
+
+- Height of the wooden board : 6.0mm
+- Height of the base from the wooden board : 13.8mm
+- Height of the Raspberry Pi unit from the base : 75.8mm
+
+- Height of the root table from the base : 77.0mm
+- Distance from the top of the root table to the axis of servo motor 2 : 27.1mm
+- Distance from the axis of servo motor 2 to that of servo motor 3 : 83.4mm
+- Distance from the axis of servo motor 3 to that of servo motor 4 : 83.4mm
+- Distance from the axis of servo motor 4 to the wrist : 73.8mm
+
+- Distance from the wrist to the tip of the pincher when the angle of the pincher is 0 (wide open) : 77.9mm
+- Distance from the wrist to the tip of the pincher when the angle of the pincher is 90 (half open) : 103.6mm
+- Distance from the wrist to the tip of the pincher when the angle of the pincher is 180 (closed) : 115.3mm
+- Length of the gripping end of the pincher : 22.3mm
+
 ### Precautions
 When the robot arm is gripping objects, it is necessary to properly control the angle of the pincher (servo motor 6). If the angle is incorrect, the servo motor may stall and burn out. Be careful!
 
@@ -117,7 +135,10 @@ Arm.Arm_serial_servo_write6_array([angle1, angle2, angle3, angle4, angle5, angle
 ```
 
 ## Vision (Camera)
-The camera is fixed between servo motors 4 and 5.
+The camera is fixed between servo motors 4 and 5. If the pincher is horizontal, the camera is mounted on top of the arm.
+
+- How far the camera lens is from the arm's axis : 50.3mm
+- How far the camera lens is from the wrist : -3.7mm
 
 ```Python
 ret, frame = cam.read()
