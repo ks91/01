@@ -203,6 +203,9 @@ response = client.chat.completions.create(
 print(response.choices[0].message.content)
 ```
 
+### In Case You Cannot Obtain Images with the Camera
+When the Raspberry Pi is started, the Yahboom Docker container is running and it holds the camera. Therefore, if the Docker container is not stopped, a situation occurs where the camera cannot be accessed. There is a docker-stop.sh script in the software directory, which can be used to stop the container.
+
 ## Full-color LED
 You can specify the intensity of red, green, and blue light individually. It is best to set them between 0 and 50.
 

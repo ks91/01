@@ -1,13 +1,24 @@
 <h1 align="center">○</h1>
 
 <p>
-This is to be used with --multimodal option to run.
-software/source/server/livekit contains the following modifications to multimodal.py, which by replacing the file can make 01 a specific agent:
+This repository is an Academy Camp fork of <code>01</code>, used for both robot sessions and development/maintenance work.
+<br>
+Academy Camp official site: <a href="https://academy-camp.org">https://academy-camp.org</a><br>
+Run it with the <code>--multimodal</code> option.
+</p>
+<p>
+This fork is also intended to be operated from coding agents, especially <code>Codex CLI</code>, not only by running 01 directly.
+If you are working as an agent, follow <code>AGENTS.md</code> first, and load <code>CAMP.md</code> at startup when it exists.
+</p>
+<p>
+The active LiveKit entrypoint is <code>software/source/server/livekit/multimodal.py</code>.
+The same directory includes role-specific variants you can use depending on your setup:
 </p>
 <ul>
     <li><b>multimodal-arm.py</b> : makes 01 a robot arm.</li>
     <li><b>multimodal-cat.py</b> : makes 01 a robot cat.</li>
     <li><b>multimodal-hexapod.py</b> : makes 01 a hexapod robot.</li>
+    <li><b>multimodal-hexapod-rpc.py</b> : uses an RPC bridge for hexapod control environments.</li>
     <li><b>multimodal-tank.py</b> : makes 01 a robot tank.</li>
 </ul>
 
@@ -22,7 +33,7 @@ software/source/server/livekit contains the following modifications to multimoda
 <br>
 
 > [!NOTE]
-> You can talk to your 01 using OpenAI's [Realtime API](https://platform.openai.com/docs/guides/realtime) (Advanced Voice Mode) via the `--multimodel` flag, e.g:
+> You can talk to your 01 using OpenAI's [Realtime API](https://platform.openai.com/docs/guides/realtime) (Advanced Voice Mode) via the `--multimodal` flag, e.g:
 > ```shell
 > poetry run 01 --server livekit --qr --expose --multimodal
 > ```
