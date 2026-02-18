@@ -88,11 +88,15 @@ RUN_START_LOCAL="$(date '+%Y-%m-%d %H:%M:%S %z')"
 } >> "$LOG_FILE"
 
 SCRIPT_OPTS=(-q -a)
-if script -h 2>&1 | grep -q -- ' -F '; then
+SCRIPT_HELP="$(script -h 2>&1 || true)"
+
+if printf '%s' "$SCRIPT_HELP" | grep -Eq -- '(^|[[:space:]])-F([,[:space:]]|$)'; then
   SCRIPT_OPTS+=(-F)
+elif printf '%s' "$SCRIPT_HELP" | grep -Eq -- '(^|[[:space:]])-f([,[:space:]]|$)'; then
+  SCRIPT_OPTS+=(-f)
 fi
 
-if script -h 2>&1 | grep -q -- ' -c '; then
+if printf '%s' "$SCRIPT_HELP" | grep -Eq -- '(^|[[:space:]])-c,|--command([[:space:]]|=)'; then
   CODEX_CMD_STRING="$(printf '%q ' "${CODEX_CMD[@]}")"
   CODEX_CMD_STRING="${CODEX_CMD_STRING% }"
   exec script "${SCRIPT_OPTS[@]}" "$LOG_FILE" -c "exec $CODEX_CMD_STRING"
