@@ -16,6 +16,8 @@ Options:
       Ignore saved contexts and always start with `codex --search`.
   --resume
       Open Codex's built-in session picker (`codex resume`).
+  -y, --no-approval
+      Start Codex with `--ask-for-approval never`.
   -h, --help
       Show this help.
 EOF
@@ -44,6 +46,7 @@ mkdir -p "$LOG_DIR"
 
 FORCE_NEW=0
 CHOOSE_RESUME=0
+NO_APPROVAL=0
 while (($# > 0)); do
   case "$1" in
     --new)
@@ -52,6 +55,10 @@ while (($# > 0)); do
       ;;
     --resume)
       CHOOSE_RESUME=1
+      shift
+      ;;
+    -y|--no-approval)
+      NO_APPROVAL=1
       shift
       ;;
     -h|--help)
@@ -71,11 +78,16 @@ if [[ "$FORCE_NEW" -eq 1 && "$CHOOSE_RESUME" -eq 1 ]]; then
   exit 2
 fi
 
-CODEX_CMD=(codex resume --last)
+CODEX_BASE_CMD=(codex)
+if [[ "$NO_APPROVAL" -eq 1 ]]; then
+  CODEX_BASE_CMD+=(--ask-for-approval never)
+fi
+
+CODEX_CMD=("${CODEX_BASE_CMD[@]}" resume --last)
 if [[ "$FORCE_NEW" -eq 1 ]]; then
-  CODEX_CMD=(codex --search)
+  CODEX_CMD=("${CODEX_BASE_CMD[@]}" --search)
 elif [[ "$CHOOSE_RESUME" -eq 1 ]]; then
-  CODEX_CMD=(codex resume)
+  CODEX_CMD=("${CODEX_BASE_CMD[@]}" resume)
 fi
 
 if is_running_under_script; then
