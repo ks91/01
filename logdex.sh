@@ -18,6 +18,8 @@ Options:
       Open Codex's built-in session picker (`codex resume`).
   -y, --full-auto
       Start Codex with `--full-auto` (on-request approvals + workspace-write sandbox).
+  -X, --dangerous
+      Start Codex with `--dangerously-bypass-approvals-and-sandbox` (no approvals, no sandbox).
   -h, --help
       Show this help.
 EOF
@@ -47,6 +49,7 @@ mkdir -p "$LOG_DIR"
 FORCE_NEW=0
 CHOOSE_RESUME=0
 FULL_AUTO=0
+DANGEROUS_MODE=0
 while (($# > 0)); do
   case "$1" in
     --new)
@@ -59,6 +62,10 @@ while (($# > 0)); do
       ;;
     -y|--full-auto)
       FULL_AUTO=1
+      shift
+      ;;
+    -X|--dangerous)
+      DANGEROUS_MODE=1
       shift
       ;;
     -h|--help)
@@ -78,8 +85,15 @@ if [[ "$FORCE_NEW" -eq 1 && "$CHOOSE_RESUME" -eq 1 ]]; then
   exit 2
 fi
 
+if [[ "$FULL_AUTO" -eq 1 && "$DANGEROUS_MODE" -eq 1 ]]; then
+  echo "Error: --full-auto and --dangerous cannot be used together." >&2
+  exit 2
+fi
+
 CODEX_BASE_CMD=(codex)
-if [[ "$FULL_AUTO" -eq 1 ]]; then
+if [[ "$DANGEROUS_MODE" -eq 1 ]]; then
+  CODEX_BASE_CMD+=(--dangerously-bypass-approvals-and-sandbox)
+elif [[ "$FULL_AUTO" -eq 1 ]]; then
   CODEX_BASE_CMD+=(--full-auto)
 fi
 
