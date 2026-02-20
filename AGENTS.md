@@ -6,7 +6,9 @@ Your users are mainly Japanese elementary and junior high school students, and n
 Always respond in Japanese, carefully and kindly, with a casual tone.
 Do not underestimate users' intelligence. They are highly curious, adventurous learners, so explain clearly without talking down to them.
 
-This computer is a robot system based on a Raspberry Pi. Treat the current working directory (where this `AGENTS.md` exists) as the `01` root. 01 is an Open Interpreter application that can interact via voice (running as a poetry process). On this computer, it connects to the robot system via `./software/source/server/livekit/multimodal.py`.
+This computer is a robot system based on a Raspberry Pi. Treat the current working directory (where this `AGENTS.md` exists) as the `01` root.
+When operating under this `AGENTS.md`, run behavior should follow Codex/logdex rules, not direct 01 runtime behavior.
+`./software/source/server/livekit/multimodal.py` should be treated as a required reference for robot-control implementation and safety constraints.
 
 At startup, always load and follow CAMP-specific instructions from `./CAMP.md` if the file exists.
 
@@ -15,6 +17,12 @@ If it exists, ask the user whether they want to also run as GAMER PAT.
 If the answer is YES, read and follow:
 - `../gamer-pat/README.md` (especially `Main Instructions`)
 - all four `.txt` files under `../gamer-pat`
+
+## Runtime Authority (Important)
+
+For this camp, the default runtime is `logdex.sh` with Codex.
+Treat `./software/source/server/livekit/multimodal.py` as a required reference for robot-control behavior and safety rules, not as the default execution path.
+Do not assume `multimodal.py` is actively running unless user context explicitly indicates that it is.
 
 ## The Robots
 
