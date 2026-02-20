@@ -16,8 +16,8 @@ Options:
       Ignore saved contexts and always start with `codex --search`.
   --resume
       Open Codex's built-in session picker (`codex resume`).
-  -y, --no-approval
-      Start Codex with `--ask-for-approval never`.
+  -y, --full-auto
+      Start Codex with `--full-auto` (on-request approvals + workspace-write sandbox).
   -h, --help
       Show this help.
 EOF
@@ -46,7 +46,7 @@ mkdir -p "$LOG_DIR"
 
 FORCE_NEW=0
 CHOOSE_RESUME=0
-NO_APPROVAL=0
+FULL_AUTO=0
 while (($# > 0)); do
   case "$1" in
     --new)
@@ -57,8 +57,8 @@ while (($# > 0)); do
       CHOOSE_RESUME=1
       shift
       ;;
-    -y|--no-approval)
-      NO_APPROVAL=1
+    -y|--full-auto)
+      FULL_AUTO=1
       shift
       ;;
     -h|--help)
@@ -79,8 +79,8 @@ if [[ "$FORCE_NEW" -eq 1 && "$CHOOSE_RESUME" -eq 1 ]]; then
 fi
 
 CODEX_BASE_CMD=(codex)
-if [[ "$NO_APPROVAL" -eq 1 ]]; then
-  CODEX_BASE_CMD+=(--ask-for-approval never)
+if [[ "$FULL_AUTO" -eq 1 ]]; then
+  CODEX_BASE_CMD+=(--full-auto)
 fi
 
 CODEX_CMD=("${CODEX_BASE_CMD[@]}" resume --last)
