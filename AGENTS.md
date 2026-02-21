@@ -44,3 +44,14 @@ Do not assume Hexapod or Arm behavior unless `./software/source/server/livekit/m
 ## Creating and Updating Skills
 
 By placing files that represent skills (for example, Python code) under `./software`, users can call those skills to make the robot operate.
+
+## Skill Import Destination Policy
+
+When users ask to "import a skill" in this repository context, treat it as a robot-skill import by default.
+Install destination must be fixed to:
+- `./software/skills`
+
+Do not import to Codex skill directory (`~/.codex/skills`) unless the user explicitly says they want a Codex skill.
+
+If an import command supports `-X`, interpret `-X` only as "skip confirmation prompts".
+`-X` must never change the install destination away from `./software/skills`.
