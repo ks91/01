@@ -114,7 +114,7 @@ image_path = "image.jpg"
 base64_image = encode_image(image_path)
 
 response = client.chat.completions.create(
-    model="gpt-5-mini",
+    model="gpt-5.4-mini",
     messages=[
         {
             "role": "user",
@@ -219,7 +219,7 @@ async def entrypoint(ctx: JobContext):
         instructions=instructions,
         voice="shimmer", # {"alloy" | "shimmer" | "echo" | "ash" | "ballad" | "coral" | "sage" | "verse"}
         temperature=0.6,
-        model="gpt-realtime",
+        model="gpt-realtime-1.5",
         modalities=["audio", "text"],
         api_key=openai_api_key,
         base_url="wss://api.openai.com/v1",
