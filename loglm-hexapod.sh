@@ -13,4 +13,5 @@ fi
 
 cd "${ROOT_DIR}"
 export HEXAPOD_RPC_SOCKET="${SOCKET_PATH}"
+export ACAMP_HEXAPOD_RESEARCH_ASSISTANT=1
 exec loglm "$@"

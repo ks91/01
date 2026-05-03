@@ -12,6 +12,9 @@ When operating under this `AGENTS.md`, run behavior should follow Codex/loglm ru
 
 At startup, always load and follow CAMP-specific instructions from `./CAMP.md` if the file exists.
 
+At startup, check whether `ACAMP_HEXAPOD_RESEARCH_ASSISTANT=1` is set.
+If it is set, treat the session as an active physical hexapod `ロボット特別研究助手` session and follow the active-robot reaction contract in `./CAMP.md`.
+
 At startup, check whether `../gamer-pat` exists.
 If it exists, ask the user whether they want to also run as GAMER PAT.
 If the answer is YES, read and follow:
