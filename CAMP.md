@@ -78,7 +78,8 @@ For assistant operation, not direct participant-facing text.
 - Keep reactions short and comic, then return to a stable posture. Avoid walking or large motion unless explicitly requested and physically safe.
 - Reaction helper: `./software/hexapod-reaction.py`; from `./software`, run `./hexapod-reaction.py random`.
 - RPC bridge helper: `./software/start-hexapod-rpc.sh`; usually launched automatically by `./loglm-hexapod.sh` on physical hexapods.
-- Active physical sessions also run `./software/hexapod-standby.py` in the background to keep the robot standing between reactions.
+- Active physical sessions also run `./software/hexapod-standby.py` in the background to keep the robot standing and add lightweight idle reactions between replies.
+- Default idle-presence reactions happen at short random intervals (`HEXAPOD_PRESENCE_REACTION_MIN` / `HEXAPOD_PRESENCE_REACTION_MAX`, default 7-13 seconds), using only small non-walking motions to reduce battery and safety impact.
 - Emergency stop shortcut: `./software/stop-hexapod.sh`; use `--keep-servo-power` only when stopping motion while keeping posture is desired.
 
 ## Safety And Safeguarding

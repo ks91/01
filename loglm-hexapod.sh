@@ -5,6 +5,11 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOCKET_PATH="${HEXAPOD_RPC_SOCKET:-/tmp/hexapod-rpc.sock}"
 LOGLM_HEXAPOD_DANGEROUS="${LOGLM_HEXAPOD_DANGEROUS:-1}"
 STANDBY_PID_FILE="${HEXAPOD_STANDBY_PID_FILE:-/tmp/hexapod-standby.pid}"
+STANDBY_ARGS=(
+  --interval "${HEXAPOD_STANDBY_INTERVAL:-5}"
+  --reaction-min "${HEXAPOD_PRESENCE_REACTION_MIN:-7}"
+  --reaction-max "${HEXAPOD_PRESENCE_REACTION_MAX:-13}"
+)
 
 if ! command -v loglm >/dev/null 2>&1; then
   echo "loglm command not found. Install loglm outside this repository first." >&2
@@ -28,7 +33,7 @@ trap cleanup EXIT INT TERM
 cd "${ROOT_DIR}"
 export HEXAPOD_RPC_SOCKET="${SOCKET_PATH}"
 export ACAMP_HEXAPOD_RESEARCH_ASSISTANT=1
-"${ROOT_DIR}/software/hexapod-standby.py" >/tmp/hexapod-standby.log 2>&1 &
+"${ROOT_DIR}/software/hexapod-standby.py" "${STANDBY_ARGS[@]}" >/tmp/hexapod-standby.log 2>&1 &
 echo $! >"${STANDBY_PID_FILE}"
 if [[ "${LOGLM_HEXAPOD_DANGEROUS}" == "0" ]]; then
   loglm "$@"
