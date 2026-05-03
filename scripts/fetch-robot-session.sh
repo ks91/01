@@ -111,6 +111,11 @@ if ! command -v rsync >/dev/null 2>&1; then
   exit 127
 fi
 
+MKTEMP="mktemp"
+if [[ -x /usr/bin/mktemp ]]; then
+  MKTEMP="/usr/bin/mktemp"
+fi
+
 DEST="${DEST_BASE%/}/${HOST_NAME}"
 mkdir -p "$DEST"
 
@@ -129,7 +134,7 @@ cleanup() {
 trap cleanup EXIT
 
 if [[ "$USE_MULTIPLEX" -eq 1 ]]; then
-  CONTROL_DIR="$(mktemp -d)"
+  CONTROL_DIR="$("$MKTEMP" -d)"
   CONTROL_PATH="${CONTROL_DIR}/ssh-control"
   SSH_OPTS=(
     -o ControlMaster=auto
