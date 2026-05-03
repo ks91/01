@@ -2,14 +2,16 @@
 set -euo pipefail
 
 usage() {
-  cat <<'EOF'
+  local command_name
+  command_name="$(basename "$0")"
+  cat <<EOF
 Usage:
-  ./scripts/fetch-robot-session.sh [options] <user@host|host>
+  ${command_name} [options] <user@host|host>
 
 Examples:
-  ./scripts/fetch-robot-session.sh red@red-hexa.local
-  ./scripts/fetch-robot-session.sh --user red red-hexa.local
-  ./scripts/fetch-robot-session.sh --remote-root /home/red/01 red@red-hexa.local
+  ${command_name} red@red-hexa.local
+  ${command_name} --user red red-hexa.local
+  ${command_name} --remote-root /home/red/01 red@red-hexa.local
 
 Options:
   --user <name>          SSH user when host is given without user@.
