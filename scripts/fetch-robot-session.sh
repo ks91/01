@@ -16,8 +16,9 @@ Options:
   --remote-root <path>   Repository root on the robot. Default: /home/<user>/01
   --dest <path>          Local destination directory. Default: ./robot-sessions/<host>
   --no-multiplex         Do not reuse a single SSH connection.
+  --with-notes           Also fetch robot research note files.
   --no-logs              Do not fetch logs/.
-  --no-notes             Do not fetch robot research note files.
+  --no-notes             Compatibility option; notes are already skipped by default.
   -h, --help             Show this help.
 
 This script is meant to run on a MacBook or staff laptop. It pulls files from
@@ -29,7 +30,7 @@ USER_NAME=""
 REMOTE_ROOT=""
 DEST_BASE="./robot-sessions"
 FETCH_LOGS=1
-FETCH_NOTES=1
+FETCH_NOTES=0
 USE_MULTIPLEX=1
 
 while [[ $# -gt 0 ]]; do
@@ -52,6 +53,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --no-logs)
       FETCH_LOGS=0
+      shift
+      ;;
+    --with-notes)
+      FETCH_NOTES=1
       shift
       ;;
     --no-notes)
