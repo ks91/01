@@ -35,11 +35,10 @@ class DryRunClient:
         return None
 
 
-NEUTRAL_STEPS = (
+STAND_STEPS = (
     ReactionStep("stop", pause=0.03),
-    ReactionStep("balance", (False,), pause=0.03),
-    ReactionStep("attitude", (0, 0, 0), pause=0.03),
-    ReactionStep("position", (0, 0, 0), pause=0.03),
+    ReactionStep("attitude", (0, 0, 0), pause=0.08),
+    ReactionStep("position", (0, 0, 0), pause=0.12),
     ReactionStep("head_horizontal", (90,), pause=0.03),
     ReactionStep("head_vertical", (90,), pause=0.03),
 )
@@ -162,7 +161,7 @@ def perform_reaction(
     finally:
         _safe_call(client, "stop")
         if return_to_neutral:
-            _run_steps(client, NEUTRAL_STEPS, sleep=sleep)
+            _run_steps(client, STAND_STEPS, sleep=sleep)
         if power_off:
             _safe_call(client, "servopower", False)
 

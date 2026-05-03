@@ -3,6 +3,7 @@ set -euo pipefail
 
 SOCKET_PATH="${HEXAPOD_RPC_SOCKET:-/tmp/hexapod-rpc.sock}"
 SYSTEM_PYTHON="${HEXAPOD_SYSTEM_PYTHON:-/usr/bin/python3}"
+STANDBY_PID_FILE="${HEXAPOD_STANDBY_PID_FILE:-/tmp/hexapod-standby.pid}"
 
 usage() {
   cat <<'EOF'
@@ -47,6 +48,14 @@ if [[ ! -S "${SOCKET_PATH}" ]]; then
   echo "Hexapod RPC socket not found: ${SOCKET_PATH}" >&2
   echo "Is the RPC bridge running? Try: ./run-hexapod.sh --rpc-status" >&2
   exit 1
+fi
+
+if [[ -f "${STANDBY_PID_FILE}" ]]; then
+  standby_pid="$(cat "${STANDBY_PID_FILE}" 2>/dev/null || true)"
+  if [[ -n "${standby_pid}" ]] && kill -0 "${standby_pid}" >/dev/null 2>&1; then
+    kill "${standby_pid}" >/dev/null 2>&1 || true
+  fi
+  rm -f "${STANDBY_PID_FILE}"
 fi
 
 "${SYSTEM_PYTHON}" - "${SOCKET_PATH}" "${KEEP_SERVO_POWER}" <<'PY'

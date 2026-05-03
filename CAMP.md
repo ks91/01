@@ -78,6 +78,7 @@ For assistant operation, not direct participant-facing text.
 - Keep reactions short and comic, then return to a stable posture. Avoid walking or large motion unless explicitly requested and physically safe.
 - Reaction helper: `./software/hexapod-reaction.py`; from `./software`, run `./hexapod-reaction.py random`.
 - RPC bridge helper: `./software/start-hexapod-rpc.sh`; usually launched automatically by `./loglm-hexapod.sh` on physical hexapods.
+- Active physical sessions also run `./software/hexapod-standby.py` in the background to keep the robot standing between reactions.
 - Emergency stop shortcut: `./software/stop-hexapod.sh`; use `--keep-servo-power` only when stopping motion while keeping posture is desired.
 
 ## Safety And Safeguarding
