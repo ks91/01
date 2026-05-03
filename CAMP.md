@@ -18,7 +18,7 @@ For assistant operation, not direct participant-facing text.
 - `./software/source/server/livekit/multimodal.py` remains a required reference before deciding robot-control behavior and safety constraints.
 - The current `multimodal.py` is an Open Interpreter / LiveKit multimodal runtime and does not by itself prove that a physical robot is actively being controlled.
 - The staff manual describes `Freenove Big Hexapod Robot Kit` devices for the camp. Treat hexapod behavior as possible only after the user context and code path clearly indicate active robot control.
-- `logdex.sh` is retired for this camp environment. Use `loglm` for logged Codex/agent sessions.
+- The old logdex runtime is retired for this camp environment. Use `loglm` for logged Codex/agent sessions.
 - `loglm` itself does not need to be included in this repository.
 - `loglm` includes personal-information removal support. Logged data can be handled through that redaction workflow before research use.
 - Do not edit `./software/source/server/livekit/multimodal.py` or the hexapod multimodal variants unless the user explicitly asks. For Codex/loglm operation, read their RPC API instructions as reference material.

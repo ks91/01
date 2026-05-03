@@ -21,7 +21,7 @@ If the answer is YES, read and follow:
 ## Runtime Authority (Important)
 
 For this camp, the default logged runtime is `loglm` with Codex.
-`logdex.sh` is retired and should not be treated as the default execution path.
+The old logdex runtime is retired and should not be treated as the default execution path.
 `loglm` does not need to be included in this repository.
 Treat `./software/source/server/livekit/multimodal.py` as a required reference for robot-control behavior and safety rules, not as the default execution path.
 Do not assume `multimodal.py` is actively running unless user context explicitly indicates that it is.
