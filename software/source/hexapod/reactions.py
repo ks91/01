@@ -82,9 +82,37 @@ REACTIONS: dict[str, Reaction] = {
     "happy": Reaction(
         "happy",
         (
-            ReactionStep("attitude", (5, 0, 5), pause=0.09),
-            ReactionStep("attitude", (-5, 0, -5), pause=0.09),
+            ReactionStep("attitude", (6, 0, 5), pause=0.10),
+            ReactionStep("attitude", (-6, 0, -5), pause=0.10),
             ReactionStep("attitude", (4, 0, 4), pause=0.08),
+        ),
+    ),
+    "sway": Reaction(
+        "sway",
+        (
+            ReactionStep("position", (-6, 0, 0), pause=0.09),
+            ReactionStep("attitude", (-6, 0, 0), pause=0.10),
+            ReactionStep("position", (6, 0, 0), pause=0.09),
+            ReactionStep("attitude", (6, 0, 0), pause=0.10),
+            ReactionStep("position", (0, 0, 0), pause=0.08),
+        ),
+    ),
+    "lean": Reaction(
+        "lean",
+        (
+            ReactionStep("position", (0, 7, 0), pause=0.10),
+            ReactionStep("attitude", (0, 7, 0), pause=0.12),
+            ReactionStep("position", (0, -5, 0), pause=0.10),
+            ReactionStep("attitude", (0, -5, 0), pause=0.10),
+        ),
+    ),
+    "bounce": Reaction(
+        "bounce",
+        (
+            ReactionStep("position", (0, 0, 5), pause=0.08),
+            ReactionStep("position", (0, 0, -3), pause=0.10),
+            ReactionStep("position", (0, 0, 4), pause=0.08),
+            ReactionStep("position", (0, 0, 0), pause=0.08),
         ),
     ),
     "tiny_wave": Reaction(
@@ -110,8 +138,11 @@ REACTIONS: dict[str, Reaction] = {
 DEFAULT_WEIGHTS: dict[str, int] = {
     "nod": 3,
     "curious": 3,
+    "sway": 3,
+    "lean": 3,
     "thinking": 2,
     "happy": 2,
+    "bounce": 2,
     "tiny_wave": 2,
     "mission": 2,
     "surprised": 1,

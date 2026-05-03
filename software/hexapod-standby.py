@@ -16,8 +16,18 @@ from source.hexapod.reactions import perform_reaction
 
 
 running = True
-PRESENCE_REACTIONS = ("nod", "curious", "thinking", "tiny_wave", "happy", "mission")
-PRESENCE_WEIGHTS = (4, 4, 3, 3, 2, 2)
+PRESENCE_REACTIONS = (
+    "nod",
+    "curious",
+    "sway",
+    "lean",
+    "thinking",
+    "tiny_wave",
+    "happy",
+    "bounce",
+    "mission",
+)
+PRESENCE_WEIGHTS = (4, 4, 4, 4, 3, 3, 2, 2, 2)
 
 
 def handle_signal(_signum, _frame) -> None:
