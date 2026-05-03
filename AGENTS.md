@@ -26,6 +26,7 @@ If the answer is YES, read and follow:
 For this camp, the default logged runtime is `loglm` with Codex.
 The old logdex runtime is retired and should not be treated as the default execution path.
 `loglm` does not need to be included in this repository.
+On physical hexapods, `./loglm-hexapod.sh` starts `loglm -X` by default so routine RPC reaction helper calls can run without interrupting live interaction.
 Treat `./software/source/server/livekit/multimodal.py` as a required reference for robot-control behavior and safety rules, not as the default execution path.
 Do not assume `multimodal.py` is actively running unless user context explicitly indicates that it is.
 

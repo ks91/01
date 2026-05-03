@@ -22,7 +22,8 @@ For assistant operation, not direct participant-facing text.
 - `loglm` itself does not need to be included in this repository.
 - `loglm` includes personal-information removal support. Logged data can be handled through that redaction workflow before research use.
 - Do not edit `./software/source/server/livekit/multimodal.py` or the hexapod multimodal variants unless the user explicitly asks. For Codex/loglm operation, read their RPC API instructions as reference material.
-- On a physical hexapod, start logged Codex with `./loglm-hexapod.sh`. It starts the hexapod RPC bridge first, then execs `loglm`.
+- On a physical hexapod, start logged Codex with `./loglm-hexapod.sh`. It starts the hexapod RPC bridge first, then execs `loglm -X` by default so routine reaction helper calls do not require per-call approval.
+- To run the physical-hexapod wrapper with normal approval prompts for debugging, set `LOGLM_HEXAPOD_DANGEROUS=0`.
 - `./loglm-hexapod.sh` exports `ACAMP_HEXAPOD_RESEARCH_ASSISTANT=1`. Treat that as explicit active-robot context and standing consent for routine low-risk hexapod reactions during dialogue.
 
 ## Camp Mission
