@@ -15,6 +15,7 @@ Options:
   --user <name>          SSH user when host is given without user@.
   --remote-root <path>   Repository root on the robot. Default: /home/<user>/01
   --dest <path>          Local destination directory. Default: ./robot-sessions/<host>
+  --no-multiplex         Do not reuse a single SSH connection.
   --no-logs              Do not fetch logs/.
   --no-notes             Do not fetch robot research note files.
   -h, --help             Show this help.
@@ -29,6 +30,7 @@ REMOTE_ROOT=""
 DEST_BASE="./robot-sessions"
 FETCH_LOGS=1
 FETCH_NOTES=1
+USE_MULTIPLEX=1
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -43,6 +45,10 @@ while [[ $# -gt 0 ]]; do
     --dest)
       DEST_BASE="${2:?missing value for --dest}"
       shift 2
+      ;;
+    --no-multiplex)
+      USE_MULTIPLEX=0
+      shift
       ;;
     --no-logs)
       FETCH_LOGS=0
@@ -103,12 +109,43 @@ fi
 DEST="${DEST_BASE%/}/${HOST_NAME}"
 mkdir -p "$DEST"
 
+CONTROL_DIR=""
+CONTROL_PATH=""
+SSH_OPTS=()
+
+cleanup() {
+  if [[ -n "$CONTROL_PATH" ]]; then
+    ssh -o ControlPath="$CONTROL_PATH" -O exit "$SSH_TARGET" >/dev/null 2>&1 || true
+  fi
+  if [[ -n "$CONTROL_DIR" ]]; then
+    rm -rf "$CONTROL_DIR"
+  fi
+}
+trap cleanup EXIT
+
+if [[ "$USE_MULTIPLEX" -eq 1 ]]; then
+  CONTROL_DIR="$(mktemp -d)"
+  CONTROL_PATH="${CONTROL_DIR}/ssh-control"
+  SSH_OPTS=(
+    -o ControlMaster=auto
+    -o ControlPath="$CONTROL_PATH"
+    -o ControlPersist=10m
+  )
+  echo "opening SSH control connection (password should be asked at most once)..."
+  ssh "${SSH_OPTS[@]}" -MNf "$SSH_TARGET"
+fi
+
+RSYNC_SSH=(ssh)
+if [[ ${#SSH_OPTS[@]} -gt 0 ]]; then
+  RSYNC_SSH+=("${SSH_OPTS[@]}")
+fi
+
 fetch_dir_if_exists() {
   local remote_dir="$1"
   local local_dir="$2"
-  if ssh "$SSH_TARGET" "test -d '$remote_dir'"; then
+  if ssh "${SSH_OPTS[@]}" "$SSH_TARGET" "test -d '$remote_dir'"; then
     mkdir -p "$local_dir"
-    rsync -av --delete "${SSH_TARGET}:${remote_dir%/}/" "${local_dir%/}/"
+    rsync -av --delete -e "${RSYNC_SSH[*]}" "${SSH_TARGET}:${remote_dir%/}/" "${local_dir%/}/"
   else
     echo "skip: remote directory not found: $remote_dir"
   fi
@@ -117,9 +154,9 @@ fetch_dir_if_exists() {
 fetch_file_if_exists() {
   local remote_file="$1"
   local local_dir="$2"
-  if ssh "$SSH_TARGET" "test -f '$remote_file'"; then
+  if ssh "${SSH_OPTS[@]}" "$SSH_TARGET" "test -f '$remote_file'"; then
     mkdir -p "$local_dir"
-    rsync -av "${SSH_TARGET}:${remote_file}" "${local_dir%/}/"
+    rsync -av -e "${RSYNC_SSH[*]}" "${SSH_TARGET}:${remote_file}" "${local_dir%/}/"
   else
     echo "skip: remote file not found: $remote_file"
   fi
